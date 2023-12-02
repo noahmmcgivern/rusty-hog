@@ -373,19 +373,10 @@ impl SecretScannerBuilder {
     /// This function looks for a "CASE" flag and "REGEX", "ALLOWLIST", "DEFAULT_ENTROPY_THRESHOLD" values.
     pub fn conf_argm(mut self, arg_matches: &ArgMatches) -> Self {
         self.case_insensitive = arg_matches.is_present("CASE");
-        self.regex_json_path = match arg_matches.value_of("REGEX") {
-            Some(s) => Some(String::from(s)),
-            None => None,
-        };
+        self.regex_json_path = arg_matches.value_of("REGEX").map(String::from);
         self.pretty_print = arg_matches.is_present("PRETTYPRINT");
-        self.output_path = match arg_matches.value_of("OUTPUT") {
-            Some(s) => Some(String::from(s)),
-            None => None,
-        };
-        self.allowlist_json_path = match arg_matches.value_of("ALLOWLIST") {
-            Some(s) => Some(String::from(s)),
-            None => None,
-        };
+        self.output_path = arg_matches.value_of("OUTPUT").map(String::from);
+        self.allowlist_json_path = arg_matches.value_of("ALLOWLIST").map(String::from);
         self.default_entropy_threshold =
             match value_t!(arg_matches.value_of("DEFAULT_ENTROPY_THRESHOLD"), f32) {
                 Ok(t) => t,
@@ -454,9 +445,9 @@ impl SecretScannerBuilder {
     pub fn build(&self) -> SecretScanner {
         let json_obj: Result<BTreeMap<String, PatternEntropy>, SimpleError> =
             match &self.regex_json_path {
-                Some(p) => Self::build_json_from_file(&Path::new(p)),
+                Some(p) => Self::build_json_from_file(Path::new(p)),
                 _ => match &self.regex_json_str {
-                    Some(s) => Self::build_json_from_str(&s),
+                    Some(s) => Self::build_json_from_str(s),
                     _ => Self::build_json_from_str(DEFAULT_REGEX_JSON),
                 },
             };
@@ -475,10 +466,7 @@ impl SecretScannerBuilder {
             self.case_insensitive,
             self.default_entropy_threshold,
         );
-        let output_path = match &self.output_path {
-            Some(s) => Some(s.clone()),
-            None => None,
-        };
+        let output_path = self.output_path.as_ref().cloned();
 
         let allowlist_map = match &self.allowlist_json_path {
             Some(p) => {
@@ -842,7 +830,7 @@ impl SecretScanner {
             .filter(|word| {
                 Self::calc_normalized_entropy(word, Some(255), false) > entropy_threshold
             })
-            .map(|word| String::from(base64::encode(&word).as_str()))
+            .map(|word| String::from(base64::encode(word).as_str()))
             .collect();
         let hex_words: Vec<String> = words
             .iter() // there must be a better way
@@ -911,7 +899,7 @@ impl SecretScanner {
                 (
                     *word,
                     Self::calc_normalized_entropy(
-                        Self::truncate_slice(&word, self.entropy_max_word_len),
+                        Self::truncate_slice(word, self.entropy_max_word_len),
                         keyspace,
                         make_ascii_lowercase,
                     ),
@@ -1092,6 +1080,9 @@ impl Default for SecretScannerBuilder {
 
 #[cfg(test)]
 mod tests {
+    extern crate encoding;
+    extern crate tempfile;
+
     use super::*;
     use encoding::all::ASCII;
     use encoding::{DecoderTrap, Encoding};
@@ -1181,7 +1172,7 @@ mod tests {
                 }
                 if !strings_found.is_empty() {
                     let new_line_string = ASCII
-                        .decode(&new_line, DecoderTrap::Ignore)
+                        .decode(new_line, DecoderTrap::Ignore)
                         .unwrap_or_else(|_| "<STRING DECODE ERROR>".parse().unwrap());
                     findings.push((r, new_line_string));
                 }
@@ -1226,7 +1217,7 @@ mod tests {
                 }
                 if !strings_found.is_empty() {
                     let new_line_string = ASCII
-                        .decode(&new_line, DecoderTrap::Ignore)
+                        .decode(new_line, DecoderTrap::Ignore)
                         .unwrap_or_else(|_| "<STRING DECODE ERROR>".parse().unwrap());
                     findings.push((r, new_line_string));
                 }
@@ -1324,7 +1315,7 @@ mod tests {
 
         let builder = SecretScannerBuilder::new();
         let scanner = builder
-            .set_json_str(&json)
+            .set_json_str(json)
             .set_default_entropy_threshold(2.0)
             .build();
         let p1 = scanner.regex_map.get("Pattern1").unwrap();
