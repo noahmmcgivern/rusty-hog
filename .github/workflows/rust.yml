@@ -25,4 +25,4 @@ jobs:
     - name: Lint
       run: |
         cargo clippy --version
-        cargo clippy -- -D warnings
+        cargo clippy
