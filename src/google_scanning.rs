@@ -80,10 +80,10 @@ use encoding::all::ASCII;
 use encoding::{DecoderTrap, Encoding};
 use google_drive3::api::Scope;
 use hyper::body;
+use rusty_hog_scanner::SecretScanner;
 use serde_derive::{Deserialize, Serialize};
 use simple_error::SimpleError;
 use std::collections::HashSet;
-use rusty_hog_scanner::SecretScanner;
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Hash, Clone, Default)]
 /// `serde_json` object that represents a single found secret - finding
