@@ -111,7 +111,7 @@ fn run(arg_matches: &ArgMatches) -> Result<(), SimpleError> {
     // Do the scan
     let git_scanner = GitScanner::new_from_scanner(secret_scanner).init_git_repo(
         source_path,
-        &dest_dir_path,
+        dest_dir_path,
         sshkeypath,
         sshkeyphrase,
         httpsuser,

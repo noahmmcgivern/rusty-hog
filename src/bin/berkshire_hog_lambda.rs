@@ -160,7 +160,7 @@ async fn my_handler(event: CustomEvent, _: Context) -> Result<CustomOutput, Erro
         .as_secs();
     let dest = format!("{}/{}", output_bucket_keyprefix, epoch);
     output_bucket
-        .put_object_with_content_type_blocking(&dest, output_string.as_bytes(), "text/plain")
+        .put_object_with_content_type_blocking(dest, output_string.as_bytes(), "text/plain")
         .unwrap();
     Ok(CustomOutput {
         is_base64_encoded: false,

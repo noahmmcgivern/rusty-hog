@@ -232,7 +232,7 @@ where
 
         debug!("sending request to {}", full_url_mod.clone());
 
-        let status = resp.status().clone();
+        let status = resp.status();
         debug!("Response: {:?}", status);
 
         let data = body::to_bytes(resp.into_body()).await.unwrap();

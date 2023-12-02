@@ -181,10 +181,7 @@ impl GitScanner {
                 Some(pc) => pc.id().to_string(),
                 None => String::from("None"),
             };
-            let a: Option<Tree> = match parent_commit_option {
-                Some(pc) => Some(pc.tree().unwrap()),
-                _ => None,
-            };
+            let a: Option<Tree> = parent_commit_option.map(|pc| pc.tree().unwrap());
             let b = commit.tree().unwrap();
             let mut diffopts = DiffOptions::new();
             diffopts.force_text(true);
@@ -241,7 +238,7 @@ impl GitScanner {
                                 commit_hash: commit.id().to_string(),
                                 commit: commit.message().unwrap().to_string(),
                                 diff: ASCII
-                                    .decode(&new_line, DecoderTrap::Ignore)
+                                    .decode(new_line, DecoderTrap::Ignore)
                                     .unwrap_or_else(|_| "<STRING DECODE ERROR>".parse().unwrap()),
                                 date: NaiveDateTime::from_timestamp(commit.time().seconds(), 0)
                                     .to_string(),

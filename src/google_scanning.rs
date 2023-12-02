@@ -241,7 +241,7 @@ impl GDriveScanner {
         // main loop - search each line for secrets, output a list of GDriveFinding objects
         let mut findings: HashSet<GDriveFinding> = HashSet::new();
         for new_line in lines {
-            let matches_map = self.secret_scanner.matches_entropy(&new_line);
+            let matches_map = self.secret_scanner.matches_entropy(new_line);
             for (reason, match_iterator) in matches_map {
                 let mut secrets: Vec<String> = Vec::new();
                 for matchobj in match_iterator {
@@ -257,7 +257,7 @@ impl GDriveScanner {
                 if !secrets.is_empty() {
                     findings.insert(GDriveFinding {
                         diff: ASCII
-                            .decode(&new_line, DecoderTrap::Ignore)
+                            .decode(new_line, DecoderTrap::Ignore)
                             .unwrap_or_else(|_| "<STRING DECODE ERROR>".parse().unwrap()),
                         date: gdrivefile.modified_time.clone(),
                         strings_found: secrets.clone(),
