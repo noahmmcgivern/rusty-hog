@@ -23,4 +23,6 @@ jobs:
     - name: Format check
       run: cargo fmt --all --check
     - name: Lint
-      run: cargo clippy -- -D warnings
+      run: |
+        cargo clippy --version
+        cargo clippy -- -D warnings
