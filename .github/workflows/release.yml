@@ -88,10 +88,11 @@ jobs:
           rm -rf tmp
           mkdir tmp
           mkdir dist
-          for dir in bins-* ; do
+          for dir in bins-*;
+          do
               platform=${dir#"bins-"}
               unset exe
-              if [[ $platform =~ "windows"; then
+              if [[ $platform =~ "windows" ]]; then
                 exe=".exe"
               fi
               pkgname=$PROJECT_NAME-$TAG-$platform
