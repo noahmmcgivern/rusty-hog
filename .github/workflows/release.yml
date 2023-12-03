@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        build: [x86_64-linux]
+        build: [x86_64-linux, aarch64-linux]
         include:
         - build: x86_64-linux
           os: ubuntu-latest
