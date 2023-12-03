@@ -99,9 +99,10 @@ jobs:
                 exe=".exe"
               fi
               pkgname=$PROJECT_NAME-$TAG-$platform
-              chmod +x dir/*
+              ls -lah $dir
+              chmod +x $dir/*
               mkdir tmp/$pkgname
-              mv dir/* tmp/$pkgname
+              mv $dir/* tmp/$pkgname
               if [ "$exe" = "" ]; then
                 tar cJf dist/$pkgname.tar.xz -C tmp $pkgname
               else
