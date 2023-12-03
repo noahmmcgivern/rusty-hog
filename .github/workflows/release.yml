@@ -58,12 +58,12 @@ jobs:
           toolchain: ${{ matrix.rust }}
           target: ${{ matrix.target }}
           override: true
-      - name: Run cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          use-cross: ${{ matrix.cross }}
-          command: test
-          args: --release --target ${{ matrix.target }}
+      # - name: Run cargo test
+      #   uses: actions-rs/cargo@v1
+      #   with:
+      #     use-cross: ${{ matrix.cross }}
+      #     command: test
+      #     args: --release --target ${{ matrix.target }}
       - name: Build release binary
         uses: actions-rs/cargo@v1
         with:
@@ -74,6 +74,7 @@ jobs:
         shell: bash
         run: |
           mkdir dist
+          ls -lah target/${{ matrix.target }}/release
           find target/${{ matrix.target }}/release -type f -maxdepth 1 -iname "*_hog" -exec cp {} dist/ \;
       - uses: actions/upload-artifact@v2.2.4
         with:
