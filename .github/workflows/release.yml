@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        build: [x86_64-linux, aarch64-linux, x86_64-macos]
+        build: [x86_64-linux, aarch64-linux, x86_64-macos, aarch64-macos]
         include:
         - build: x86_64-linux
           os: ubuntu-latest
@@ -35,6 +35,11 @@ jobs:
           rust: stable
           target: x86_64-apple-darwin
           cross: false
+        - build: aarch64-macos
+          os: macos-latest
+          rust: stable
+          target: aarch64-apple-darwin
+          cross: true
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
