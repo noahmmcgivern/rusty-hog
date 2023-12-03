@@ -8,6 +8,9 @@ on:
 permissions:
   contents: write
 
+env:
+  PROJECT_NAME: rustyhog
+
 jobs:
   dist:
     name: Dist
@@ -96,8 +99,9 @@ jobs:
                 exe=".exe"
               fi
               pkgname=$PROJECT_NAME-$TAG-$platform
+              chmod +x dir/*
               mkdir tmp/$pkgname
-              mv bins-$platform/$BIN_NAME$exe
+              mv dir/* tmp/$pkgname
               if [ "$exe" = "" ]; then
                 tar cJf dist/$pkgname.tar.xz -C tmp $pkgname
               else
