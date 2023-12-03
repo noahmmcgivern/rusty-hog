@@ -36,7 +36,7 @@ jobs:
           target: x86_64-apple-darwin
           cross: false
         - build: aarch64-macos
-          os: macos-13-arm64
+          os: macos-13-xlarge
           rust: stable
           target: aarch64-apple-darwin
           cross: false
