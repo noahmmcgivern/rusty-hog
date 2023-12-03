@@ -36,7 +36,7 @@ jobs:
           target: x86_64-apple-darwin
           cross: false
         # - build: aarch64-macos
-        #   os: macos-latest
+        #   os: macos-13
         #   rust: stable
         #   target: aarch64-apple-darwin
         #   cross: false
@@ -75,8 +75,12 @@ jobs:
         run: |
           mkdir dist
           ls -lah target/${{ matrix.target }}/release
-          find target/${{ matrix.target }}/release -type f -maxdepth 1 -iname "*_hog" -exec cp {} dist/ \;
-      - uses: actions/upload-artifact@v2.2.4
+          if [[ ${{ matrix.build }} =~ "windows" ]]; then
+              echo "${{ matrix.build }}: using .exe extension"
+              exe=".exe"
+          fi
+          find target/${{ matrix.target }}/release -type f -maxdepth 1 -iname "*_hog$exe" -exec cp {} dist/ \;
+      - uses: actions/upload-artifact@v3
         with:
           name: bins-${{ matrix.build }}
           path: dist
@@ -134,6 +138,3 @@ jobs:
           file_glob: true
           tag: ${{ steps.tagname.outputs.val }}
           overwrite: true
-      # - name: Extract version
-      #   id: extract-version
-      #   run: printf "::set-output name=%s::%s\n" tag-name "${GITHUB_REF#refs/tags/}"
