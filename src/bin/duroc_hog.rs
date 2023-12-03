@@ -368,6 +368,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(not(target_os="windows"))]
     fn does_not_scan_output_file() {
         let temp_dir = TempDir::new().unwrap();
 

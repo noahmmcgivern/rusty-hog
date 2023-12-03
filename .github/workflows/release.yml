@@ -109,20 +109,21 @@ jobs:
           for dir in bins-*;
           do
               platform=${dir#"bins-"}
-              unset exe
-              if [[ $platform =~ "windows" ]]; then
-                exe=".exe"
-              fi
+              # unset exe
+              # if [[ $platform =~ "windows" ]]; then
+              #   exe=".exe"
+              # fi
               pkgname=$PROJECT_NAME-$TAG-$platform
               ls -lah $dir
               chmod +x $dir/*
               mkdir tmp/$pkgname
               mv $dir/* tmp/$pkgname
-              if [ "$exe" = "" ]; then
-                tar cJf dist/$pkgname.tar.xz -C tmp $pkgname
-              else
-                (cd tmp && 7z a -r ../dist/$pkgname.zip $pkgname)
-              fi
+              tar cJf dist/$pkgname.tar.xz -C tmp $pkgname
+              # if [ "$exe" = "" ]; then
+              #   tar cJf dist/$pkgname.tar.xz -C tmp $pkgname
+              # else
+              #   (cd tmp && 7z a -r ../dist/$pkgname.zip $pkgname)
+              # fi
           done
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
