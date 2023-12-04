@@ -99,14 +99,14 @@ jobs:
           if [[ $GITHUB_REF == refs/tags/v* ]]; then
             name=${GITHUB_REF:10}
           fi
-          echo TAG=${name//v} >> $GITHUB_OUTPUT
+          echo "{tag}={${name//v}}" >> $GITHUB_OUTPUT
         id: tagname
       - name: Build Docker Images
         shell: bash
-        run: make docker-build VERSION=${{ steps.tagname.outputs.val }}
+        run: make docker-build VERSION=${{ steps.tagname.outputs.tag }}
       - name: Save Docker Images
         shell: bash
-        run: make docker-save VERSION=${{ steps.tagname.outputs.val }}
+        run: make docker-save VERSION=${{ steps.tagname.outputs.tag }}
       - uses: actions/upload-artifact@v3
         with:
           name: docker
@@ -129,7 +129,7 @@ jobs:
           if [[ $GITHUB_REF == refs/tags/v* ]]; then
             name=${GITHUB_REF:10}
           fi
-          echo TAG=$name >> $GITHUB_OUTPUT
+          echo "{tag}={${name}}" >> $GITHUB_OUTPUT
         id: tagname
       - name: Build archive
         shell: bash
@@ -163,7 +163,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: dist/*
           file_glob: true
-          tag: ${{ steps.tagname.outputs.val }}
+          tag: ${{ steps.tagname.outputs.tag }}
           overwrite: true
   publish-docker:
     name: Publish Docker Images
