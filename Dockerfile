@@ -1,5 +1,4 @@
-ARG RUST_VERSION=1.51
-FROM rust:${RUST_VERSION} as builder
+FROM rust:latest as builder
 RUN mkdir -p /build
 WORKDIR /build
 COPY . /build/

@@ -12,8 +12,8 @@ env:
   PROJECT_NAME: rustyhog
 
 jobs:
-  dist:
-    name: Dist
+  dist-binaries:
+    name: Dist Binaries
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: true
@@ -53,9 +53,6 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
-      # - name: Install gcc-aarch64-linux-gnu
-      #   run: sudo apt-get install -y gcc-aarch64-linux-gnu
-      #   if: ${{ matrix.target == 'aarch64-unknown-linux-gnu' }}
       - name: Install ${{ matrix.rust }} toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -89,6 +86,25 @@ jobs:
         with:
           name: bins-${{ matrix.build }}
           path: dist
+  dist-docker:
+    name: Dist Docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      - name: Get tag name
+        run: |
+          name=dev
+          echo $GITHUB_REF
+          if [[ $GITHUB_REF == refs/tags/v* ]]; then
+            name=${GITHUB_REF:10}
+          fi
+          echo ::set-output name=val::$name
+          echo TAG=${name//v} >> $GITHUB_ENV
+        id: tagname
+      - name: Build Docker Images
+        shell: bash
+        run: make build-docker version=${{ steps.tagname.outputs.val }}
   publish:
     name: Publish
     needs: [dist]
@@ -103,6 +119,7 @@ jobs:
       - name: Get tag name
         run: |
           name=dev
+          echo $GITHUB_REF
           if [[ $GITHUB_REF == refs/tags/v* ]]; then
             name=${GITHUB_REF:10}
           fi
