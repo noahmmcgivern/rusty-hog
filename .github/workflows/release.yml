@@ -146,7 +146,11 @@ jobs:
               chmod +x $dir/*
               mkdir tmp/$pkgname
               mv $dir/* tmp/$pkgname
-              tar cJf dist/$pkgname.tar.xz -C tmp $pkgname
+              if [[ $platform =~ "windows" ]]; then
+                  (cd tmp && zip -r ../dist/$pkgname.zip $pkgname)
+              else
+                  tar czf dist/$pkgname.tar.gz -C tmp $pkgname
+              fi
           done
       - name: Add scripts to archive
         shell: bash
