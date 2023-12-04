@@ -107,7 +107,7 @@ jobs:
         run: make docker-build VERSION=${{ steps.tagname.outputs.val }}
       - name: Save Docker Images
         shell: bash
-	run: make docker-save VERSION=${{ steps.tagname.outputs.val }}
+        run: make docker-save VERSION=${{ steps.tagname.outputs.val }}
       - uses: actions/upload-artifact@v3
         with:
           name: docker
