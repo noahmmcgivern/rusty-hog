@@ -9,4 +9,3 @@ build-docker:
 	docker build --tag wetfeet2000/duroc_hog:$(version) --build-arg HOG=duroc -f Dockerfile.hog .
 	docker build --tag wetfeet2000/essex_hog:$(version) --build-arg HOG=essex -f Dockerfile.hog .
 	docker build --tag wetfeet2000/gottingen_hog:$(version) --build-arg HOG=gottingen -f Dockerfile.hog .
-

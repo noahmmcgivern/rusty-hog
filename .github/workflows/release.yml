@@ -107,7 +107,7 @@ jobs:
         run: make build-docker version=${{ steps.tagname.outputs.val }}
   publish:
     name: Publish
-    needs: [dist]
+    needs: [dist-binaries, dist-docker]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
