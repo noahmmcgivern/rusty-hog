@@ -196,7 +196,7 @@ jobs:
         shell: bash
         run: |
           pkgname=$PROJECT_NAME-${{ steps.tagname.outputs.tag }}-scripts
-          tar czf dist/$pkgname.tar.xz scripts
+          tar czf dist/$pkgname.tar.gz scripts
       - name: Release archive
         uses: svenstaro/upload-release-action@v2
         with:
