@@ -18,23 +18,23 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        build: [x86_64-linux, x86_64-linux-musl, aarch64-linux, x86_64-macos, x86_64-windows]
+        build: [x86_64-linux, x86_64-macos, x86_64-windows]
         include:
         - build: x86_64-linux
           os: ubuntu-latest
           rust: stable
           target: x86_64-unknown-linux-gnu
           cross: false
-        - build: x86_64-linux-musl
-          os: ubuntu-latest
-          rust: stable
-          target: x86_64-unknown-linux-musl
-          cross: true
-        - build: aarch64-linux
-          os: ubuntu-latest
-          rust: stable
-          target: aarch64-unknown-linux-gnu
-          cross: true
+        # - build: x86_64-linux-musl
+        #   os: ubuntu-latest
+        #   rust: stable
+        #   target: x86_64-unknown-linux-musl
+        #   cross: true
+        # - build: aarch64-linux
+        #   os: ubuntu-latest
+        #   rust: stable
+        #   target: aarch64-unknown-linux-gnu
+        #   cross: true
         - build: x86_64-macos
           os: macos-latest
           rust: stable
@@ -66,7 +66,7 @@ jobs:
       #     use-cross: ${{ matrix.cross }}
       #     command: test
       #     args: --release --target ${{ matrix.target }}
-      - name: Build release binary
+      - name: Build release binaries
         uses: actions-rs/cargo@v1
         with:
           use-cross: ${{ matrix.cross }}
@@ -81,10 +81,37 @@ jobs:
               echo "${{ matrix.build }}: using .exe extension"
               exe=".exe"
           fi
-          find target/${{ matrix.target }}/release -type f -maxdepth 1 -iname "*_hog$exe" -exec cp {} dist/ \;
+          cp ./target/${{ matrix.target }}/release/*_hog$exe dist
       - uses: actions/upload-artifact@v3
         with:
           name: bins-${{ matrix.build }}
+          path: dist
+  dist-lambda:
+    name: Dist Lambda
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      - name: Get tag name
+        id: tagname
+        run: |
+          name=dev
+          echo $GITHUB_REF
+          if [[ $GITHUB_REF == refs/tags/v* ]]; then
+            name=${GITHUB_REF:10}
+          fi
+          echo "tag=${name//v}" >> "$GITHUB_OUTPUT"
+      - name: Build release binaries
+        shell: bash
+        run: cross build --release --target x86_64-unknown-linux-musl
+      - name: Build archive
+        shell: bash
+        run: |
+          mkdir dist
+          cp ./target/x86_64-unknown-linux-musl/release/*_lambda dist
+      - uses: actions/upload-artifact@v3
+        with:
+          name: bins-lambda
           path: dist
   dist-docker:
     name: Dist Docker
@@ -113,7 +140,7 @@ jobs:
           path: images.tar
   publish:
     name: Publish
-    needs: [dist-binaries, dist-docker]
+    needs: [dist-binaries, dist-lambda, dist-docker]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -156,7 +183,7 @@ jobs:
         shell: bash
         run: |
           pkgname=$PROJECT_NAME-${{ steps.tagname.outputs.tag }}-scripts
-          tar cJf dist/$pkgname.tar.xz scripts
+          tar czf dist/$pkgname.tar.xz scripts
       - name: Release archive
         uses: svenstaro/upload-release-action@v2
         with:
@@ -167,7 +194,7 @@ jobs:
           overwrite: true
   publish-docker:
     name: Publish Docker Images
-    needs: [dist-binaries, dist-docker]
+    needs: [dist-binaries, dist-lambda, dist-docker]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
