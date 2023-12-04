@@ -93,14 +93,14 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v3
       - name: Get tag name
+        id: tagname
         run: |
           name=dev
           echo $GITHUB_REF
           if [[ $GITHUB_REF == refs/tags/v* ]]; then
             name=${GITHUB_REF:10}
           fi
-          echo "{tag}={${name//v}}" >> $GITHUB_OUTPUT
-        id: tagname
+          echo "tag=${name//v}" >> "$GITHUB_OUTPUT"
       - name: Build Docker Images
         shell: bash
         run: make docker-build VERSION=${{ steps.tagname.outputs.tag }}
@@ -123,14 +123,14 @@ jobs:
       - name: List binaries
         run: ls -lah bins-*
       - name: Get tag name
+        id: tagname
         run: |
           name=dev
           echo $GITHUB_REF
           if [[ $GITHUB_REF == refs/tags/v* ]]; then
             name=${GITHUB_REF:10}
           fi
-          echo "{tag}={${name}}" >> $GITHUB_OUTPUT
-        id: tagname
+          echo "tag=${name}" >> "$GITHUB_OUTPUT"
       - name: Build archive
         shell: bash
         run: |
