@@ -150,9 +150,9 @@ jobs:
           done
       - name: Add scripts to archive
         shell: bash
-	run: |
-	  pkgname=$PROJECT_NAME-${{ steps.tagname.outputs.tag }}-scripts
-	  tar cJf dist/$pkgname.tar.xz scripts
+        run: |
+          pkgname=$PROJECT_NAME-${{ steps.tagname.outputs.tag }}-scripts
+          tar cJf dist/$pkgname.tar.xz scripts
       - name: Release archive
         uses: svenstaro/upload-release-action@v2
         with:
