@@ -99,8 +99,7 @@ jobs:
           if [[ $GITHUB_REF == refs/tags/v* ]]; then
             name=${GITHUB_REF:10}
           fi
-          echo ::set-output name=val::$name
-          echo TAG=${name//v} >> $GITHUB_ENV
+          echo TAG=${name//v} >> $GITHUB_OUTPUT
         id: tagname
       - name: Build Docker Images
         shell: bash
@@ -130,8 +129,7 @@ jobs:
           if [[ $GITHUB_REF == refs/tags/v* ]]; then
             name=${GITHUB_REF:10}
           fi
-          echo ::set-output name=val::$name
-          echo TAG=$name >> $GITHUB_ENV
+          echo TAG=$name >> $GITHUB_OUTPUT
         id: tagname
       - name: Build archive
         shell: bash

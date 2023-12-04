@@ -10,9 +10,10 @@ docker-build: check-version
 	docker build --tag wetfeet2000/duroc_hog:$(VERSION) --build-arg HOG=duroc -f Dockerfile.hog .
 	docker build --tag wetfeet2000/essex_hog:$(VERSION) --build-arg HOG=essex -f Dockerfile.hog .
 	docker build --tag wetfeet2000/gottingen_hog:$(VERSION) --build-arg HOG=gottingen -f Dockerfile.hog .
+	docker build --tag wetfeet2000/hante_hog:$(VERSION) --build-arg HOG=hante -f Dockerfile.hog .
 
 docker-save: check-version
-	docker image save -o images.tar wetfeet2000/ankamali_hog:$(VERSION) wetfeet2000/berkshire_hog:$(VERSION) wetfeet2000/choctaw_hog:$(VERSION) wetfeet2000/duroc_hog:$(VERSION) wetfeet2000/gottingen_hog:$(VERSION)
+	docker image save -o images.tar wetfeet2000/ankamali_hog:$(VERSION) wetfeet2000/berkshire_hog:$(VERSION) wetfeet2000/choctaw_hog:$(VERSION) wetfeet2000/duroc_hog:$(VERSION) wetfeet2000/essex_hog:$(VERSION) wetfeet2000/gottingen_hog:$(VERSION) wetfeet2000/hante_hog:$(VERSION)
 
 docker-load:
 	docker load -i images.tar
