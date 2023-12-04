@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 env:
-  PROJECT_NAME: rustyhog
+  PROJECT_NAME: rustyhogs
 
 jobs:
   dist-binaries:
@@ -141,23 +141,19 @@ jobs:
           for dir in bins-*;
           do
               platform=${dir#"bins-"}
-              # unset exe
-              # if [[ $platform =~ "windows" ]]; then
-              #   exe=".exe"
-              # fi
-              pkgname=$PROJECT_NAME-$TAG-$platform
+              pkgname=$PROJECT_NAME-${{ steps.tagname.outputs.tag }}-$platform
               ls -lah $dir
               chmod +x $dir/*
               mkdir tmp/$pkgname
               mv $dir/* tmp/$pkgname
               tar cJf dist/$pkgname.tar.xz -C tmp $pkgname
-              # if [ "$exe" = "" ]; then
-              #   tar cJf dist/$pkgname.tar.xz -C tmp $pkgname
-              # else
-              #   (cd tmp && 7z a -r ../dist/$pkgname.zip $pkgname)
-              # fi
           done
-      - name: Upload binaries to release
+      - name: Add scripts to archive
+        shell: bash
+	run: |
+	  pkgname=$PROJECT_NAME-${{ steps.tagname.outputs.tag }}-scripts
+	  tar cJf dist/$pkgname.tar.xz scripts
+      - name: Release archive
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
