@@ -104,7 +104,14 @@ jobs:
         id: tagname
       - name: Build Docker Images
         shell: bash
-        run: make build-docker version=${{ steps.tagname.outputs.val }}
+        run: make docker-build VERSION=${{ steps.tagname.outputs.val }}
+      - name: Save Docker Images
+        shell: bash
+	run: make docker-save VERSION=${{ steps.tagname.outputs.val }}
+      - uses: actions/upload-artifact@v3
+        with:
+          name: docker
+          path: images.tar
   publish:
     name: Publish
     needs: [dist-binaries, dist-docker]
@@ -160,3 +167,15 @@ jobs:
           file_glob: true
           tag: ${{ steps.tagname.outputs.val }}
           overwrite: true
+  publish-docker:
+    name: Publish Docker Images
+    needs: [dist-binaries, dist-docker]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: docker
+      - name: Display artifacts
+        shell: bash
+        run: ls -R
