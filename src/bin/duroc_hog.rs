@@ -413,7 +413,7 @@ mod tests {
 
         println!("{}", text);
 
-        assert!(text.contains("\"path\":\".\\\\insecure-file.txt\""));
+        assert!(text.contains("\"path\":\".\\insecure-file.txt\""));
         assert!(!text.contains("output_file.txt"));
     }
 
