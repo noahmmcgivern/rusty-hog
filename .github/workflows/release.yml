@@ -90,15 +90,6 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
-      - name: Get tag name
-        id: tagname
-        run: |
-          name=dev
-          echo $GITHUB_REF
-          if [[ $GITHUB_REF == refs/tags/v* ]]; then
-            name=${GITHUB_REF:10}
-          fi
-          echo "tag=${name//v}" >> "$GITHUB_OUTPUT"
       - name: Install stable-x86_64-unknown-linux-musl toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -165,7 +156,8 @@ jobs:
           if [[ $GITHUB_REF == refs/tags/v* ]]; then
             name=${GITHUB_REF:10}
           fi
-          echo "tag=${name}" >> "$GITHUB_OUTPUT"
+          echo "tagname=${name}" >> "$GITHUB_OUTPUT"
+          echo "tag=${name//v}" >> "$GITHUB_OUTPUT"
       - name: Build archive
         shell: bash
         run: |
@@ -198,7 +190,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: dist/*
           file_glob: true
-          tag: ${{ steps.tagname.outputs.tag }}
+          tag: ${{ steps.tagname.outputs.tagname }}
           overwrite: true
   publish-docker:
     name: Publish Docker Images
